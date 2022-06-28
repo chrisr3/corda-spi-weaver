@@ -1,0 +1,47 @@
+plugins {
+    id 'biz.aQute.bnd.builder'
+    id 'com.jfrog.artifactory'
+    id 'maven-publish'
+    id 'java-library'
+}
+
+description 'Dynamic extra weaving for SPI support.'
+
+dependencies {
+    compileOnly "org.osgi:osgi.annotation:$osgiAnnotationVersion"
+    compileOnly "org.osgi:osgi.core:$osgiCoreVersion"
+    compileOnly "org.osgi:org.osgi.service.serviceloader:$osgiServiceLoaderVersion"
+    compileOnly "biz.aQute.bnd:biz.aQute.bndlib:$bndVersion"
+    compileOnly "org.ow2.asm:asm-commons:$asmVersion"
+    compileOnly "org.ow2.asm:asm:$asmVersion"
+}
+
+def jar = tasks.named('jar', Jar) {
+    archiveBaseName = "corda-${project.name}"
+    bundle {
+        bnd '''\
+Bundle-Name: \${project.description}
+Bundle-SymbolicName: \${project.group}.\${project.name}
+-fixupmessages "Export [^,]++,\\\\s++has (\\\\d++),\\\\s++private references "; restrict:=warning; is:=error
+-conditionalpackage: \
+    org.objectweb.asm.*, \
+    aQute.*
+'''
+    }
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+
+            afterEvaluate {
+                artifactId = jar.flatMap { it.archiveBaseName }.get()
+            }
+        }
+    }
+}
+
+artifactoryPublish {
+    publications 'maven'
+}

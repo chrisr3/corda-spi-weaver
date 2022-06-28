@@ -1,0 +1,16 @@
+pluginManagement {
+    plugins {
+        id 'biz.aQute.bnd.builder' version bndVersion
+        id 'com.jfrog.artifactory' version artifactoryPluginVersion
+    }
+}
+
+dependencyResolutionManagement {
+    repositories {
+        mavenCentral()
+    }
+}
+
+rootProject.name = 'corda-spi-weaver'
+
+include 'extra-spi-weaver'

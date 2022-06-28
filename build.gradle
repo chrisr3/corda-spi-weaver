@@ -1,0 +1,92 @@
+import static org.gradle.jvm.toolchain.JavaLanguageVersion.of
+
+plugins {
+    id 'com.jfrog.artifactory'
+    id 'maven-publish'
+    id 'base'
+}
+
+ext {
+    vcsUrl = System.getenv('GIT_URL') ?: 'https://github.com/corda/corda-spi-weaver.git'
+}
+
+subprojects {
+    group = 'net.corda'
+    version = '1.0.0-SNAPSHOT'
+
+    pluginManager.withPlugin('java') {
+        java {
+            toolchain {
+                languageVersion = of(11)
+            }
+
+            withSourcesJar()
+            withJavadocJar()
+        }
+
+        tasks.withType(JavaCompile).configureEach {
+            options.encoding = 'UTF-8'
+        }
+
+        tasks.withType(Jar).configureEach {
+            manifest {
+                attributes('Corda-Vendor': 'Corda Open Source')
+            }
+        }
+    }
+
+    pluginManager.withPlugin('maven-publish') {
+        tasks.register('install') {
+            dependsOn 'publishToMavenLocal'
+        }
+
+        tasks.withType(GenerateModuleMetadata).configureEach {
+            enabled = false
+        }
+
+        publishing {
+            publications.configureEach {
+                pom {
+                    description = project.description
+
+                    url = vcsUrl - '.git'
+                    scm {
+                        url = vcsUrl
+                    }
+
+                    licenses {
+                        license {
+                            name = 'Apache License, Version 2.0'
+                            url = 'https://www.apache.org/licenses/LICENSE-2.0.txt'
+                            distribution = 'repo'
+                        }
+                    }
+
+                    developers {
+                        developer {
+                            id = 'R3'
+                            name = 'R3'
+                            email = 'dev@corda.net'
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+artifactory {
+    publish {
+        contextUrl = artifactoryContextUrl
+        repository {
+            repoKey = System.getenv('CORDA_ARTIFACTORY_REPOKEY') ?: 'corda-dependencies-dev'
+            username = project.findProperty('cordaArtifactoryUsername') ?: System.getenv('CORDA_ARTIFACTORY_USERNAME')
+            password = project.findProperty('cordaArtifactoryPassword') ?: System.getenv('CORDA_ARTIFACTORY_APIKEY')
+        }
+    }
+}
+
+wrapper {
+    gradleVersion = '7.4.2'
+    distributionType = Wrapper.DistributionType.BIN
+}

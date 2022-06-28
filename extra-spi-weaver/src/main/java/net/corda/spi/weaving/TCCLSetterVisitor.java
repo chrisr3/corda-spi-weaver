@@ -108,14 +108,15 @@ class TCCLSetterVisitor extends ClassVisitor {
 
             final String serviceClassName = weavingData.getClassName();
             final String serviceMethodName = weavingData.getMethodName();
+            final String[] serviceArgClasses = weavingData.getArgClasses();
 
             // XMLFactory.newInstance(..) and XMLFactory.newFactory(..)
-            if (FACTORY_TYPES.contains(serviceClassName) && FACTORY_NAMES.contains(serviceMethodName)) {
+            if (FACTORY_TYPES.contains(serviceClassName) && FACTORY_NAMES.contains(serviceMethodName) && serviceArgClasses != null) {
                 visitLdcInsn(targetClass);
                 invokeStatic(UTIL_CLASS, new Method(
                     "new" + serviceClassName.substring(serviceClassName.lastIndexOf('.') + 1) + serviceMethodName.substring(3),
                     Type.getObjectType(serviceClassName.replace('.', '/')),
-                    weavingData.getArgClasses() == null
+                    serviceArgClasses.length == 0
                         ? new Type[] { CLASS_TYPE }
                         : new Type[] { STRING_TYPE, CLASSLOADER_TYPE, CLASS_TYPE }
                 ));

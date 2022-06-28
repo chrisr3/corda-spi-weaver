@@ -48,9 +48,6 @@ public class ArgRestrictions {
         for (Pair<Integer, String> key : restrictions.keySet()) {
             classes.add(key.getRight());
         }
-        
-        if (classes.size() == 0)
-            return null;
         return classes.toArray(new String[0]);
     }
 

@@ -25,6 +25,8 @@ import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.GeneratorAdapter;
 import org.objectweb.asm.commons.Method;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
@@ -65,7 +67,7 @@ class TCCLSetterVisitor extends ClassVisitor {
     // This field is true when the class was woven
     private boolean woven = false;
 
-    TCCLSetterVisitor(ClassVisitor cv, String className, Set<WeavingData> weavingData) {
+    TCCLSetterVisitor(ClassVisitor cv, @Nonnull String className, Set<WeavingData> weavingData) {
         super(ASM9, cv);
         this.targetClass = Type.getObjectType(className.replace('.', '/'));
         this.weavingData = weavingData;
@@ -123,6 +125,7 @@ class TCCLSetterVisitor extends ClassVisitor {
             }
         }
 
+        @Nullable
         private WeavingData findWeavingData(String owner, String methodName, String methodDesc) {
             final Type[] argTypes = Type.getArgumentTypes(methodDesc);
             String[] argClassNames = new String[argTypes.length];

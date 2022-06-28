@@ -29,6 +29,8 @@ import org.osgi.framework.Filter;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.InvalidSyntaxException;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
@@ -49,6 +51,7 @@ import static org.osgi.framework.Constants.VERSION_ATTRIBUTE;
 import static org.osgi.service.serviceloader.ServiceLoaderNamespace.SERVICELOADER_NAMESPACE;
 
 final class ConsumerHeaderProcessor {
+    @Nonnull
     static Set<WeavingData> processRequireCapabilityHeader(String consumerHeader) throws InvalidSyntaxException {
         Set<WeavingData> weavingData = new HashSet<>();
 
@@ -112,8 +115,13 @@ final class ConsumerHeaderProcessor {
         return weavingData;
     }
 
-    private static WeavingData createWeavingData(String className, String methodName,
-            MethodRestriction methodRestriction, List<BundleDescriptor> allowedBundles) {
+    @Nonnull
+    private static WeavingData createWeavingData(
+        String className,
+        String methodName,
+        MethodRestriction methodRestriction,
+        @Nonnull List<BundleDescriptor> allowedBundles
+    ) {
         ConsumerRestriction restriction = new ConsumerRestriction(className, methodRestriction);
 
         Set<ConsumerRestriction> restrictions = new HashSet<>();
@@ -124,7 +132,8 @@ final class ConsumerHeaderProcessor {
         return new WeavingData(className, methodName, argClasses, restrictions, allowedBundles.isEmpty() ? null : allowedBundles);
     }
 
-    static Entry<String, ? extends Map<String, String>> findCapability(Parameters capabilities, String namespace, String spiName) {
+    @Nullable
+    static Entry<String, ? extends Map<String, String>> findCapability(@Nonnull Parameters capabilities, String namespace, String spiName) {
         for (Entry<String, ? extends Map<String, String>> cap : capabilities.entrySet()) {
             String key = removeDuplicateMarker(cap.getKey());
             if (namespace.equals(key)) {
@@ -136,7 +145,8 @@ final class ConsumerHeaderProcessor {
         return null;
     }
 
-    static Entry<String, ? extends Map<String, String>> findRequirement(Parameters requirements, String namespace, String type) throws InvalidSyntaxException {
+    @Nullable
+    static Entry<String, ? extends Map<String, String>> findRequirement(@Nonnull Parameters requirements, String namespace, String type) throws InvalidSyntaxException {
         Dictionary<String, Object> nsAttr = new Hashtable<>();
         nsAttr.put(namespace, type);
         nsAttr.put(VERSION_ATTRIBUTE, "1.0.0");
@@ -156,7 +166,8 @@ final class ConsumerHeaderProcessor {
         return null;
     }
 
-    static Collection<Entry<String, ? extends Map<String, String>>> findAllMetadata(Parameters requirementsOrCapabilities, String namespace) {
+    @Nonnull
+    static Collection<Entry<String, ? extends Map<String, String>>> findAllMetadata(@Nonnull Parameters requirementsOrCapabilities, String namespace) {
         List<Entry<String, ? extends Map<String, String>>> reqsCaps = new ArrayList<>();
         for (Entry<String, ? extends Map<String, String>> reqCap : requirementsOrCapabilities.entrySet()) {
             String key = removeDuplicateMarker(reqCap.getKey());
@@ -167,11 +178,12 @@ final class ConsumerHeaderProcessor {
         return reqsCaps;
     }
 
-    static String removeDuplicateMarker(String key) {
+    @Nonnull
+    static String removeDuplicateMarker(@Nonnull String key) {
         int i = key.length() - 1;
-        while (i >= 0 && key.charAt(i) == '~')
+        while (i >= 0 && key.charAt(i) == '~') {
             --i;
-
+        }
         return key.substring(0, i + 1);
     }
 }

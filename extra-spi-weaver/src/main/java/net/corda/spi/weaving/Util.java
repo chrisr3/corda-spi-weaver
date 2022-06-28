@@ -27,6 +27,8 @@ import org.osgi.framework.ServicePermission;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.wiring.BundleWiring;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
@@ -42,7 +44,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static java.security.AccessController.doPrivileged;
@@ -53,6 +54,7 @@ import static org.osgi.framework.ServicePermission.GET;
 /**
  * Methods used from ASM-generated code.
  */
+@SuppressWarnings("unused")
 public final class Util {
     private static final Logger logger = DynamicExtraWeavingActivator.logger;
 
@@ -107,7 +109,7 @@ public final class Util {
         return createXMLFactory(caller, XMLEventFactory.class.getName(), XMLEventFactory::newInstance);
     }
 
-    private static <X> X createXMLFactory(Class<?> caller, String factoryClassName, Supplier<X> factory) {
+    private static <X> X createXMLFactory(@Nonnull Class<?> caller, String factoryClassName, Supplier<X> factory) {
         final ClassLoader bundleLoader = doPrivileged((PrivilegedAction<? extends ClassLoader>)caller::getClassLoader);
         if (!(bundleLoader instanceof BundleReference)) {
             logger.log(FINE, "Classloader of consuming bundle doesn't implement BundleReference: {0}", bundleLoader);
@@ -130,7 +132,7 @@ public final class Util {
     private static <X> X createXMLFactory(
         String factoryId,
         ClassLoader specifiedClassLoader,
-        Class<?> caller,
+        @Nonnull Class<?> caller,
         String factoryClassName,
         BiFunction<String, ClassLoader, X> factory
     ) {
@@ -148,6 +150,7 @@ public final class Util {
         );
     }
 
+    @Nullable
     private static ClassLoader findContextClassloader(Bundle consumerBundle, String className, String requestedClass) {
         Collection<Bundle> bundles;
         try {

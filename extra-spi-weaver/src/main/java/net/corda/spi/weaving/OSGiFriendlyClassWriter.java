@@ -25,6 +25,8 @@ import org.osgi.framework.wiring.BundleCapability;
 import org.osgi.framework.wiring.BundleWire;
 import org.osgi.framework.wiring.BundleWiring;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
@@ -61,6 +63,7 @@ final class OSGiFriendlyClassWriter extends ClassWriter {
      * precondition: classA and classB are not equal. (checked before this method is called)
      */
     @Override
+    @Nullable
     protected String getCommonSuperClass(String classA, String classB) {
         //If either is Object, then Object must be the answer
         if (OBJECT_INTERNAL_NAME.equals(classA) || OBJECT_INTERNAL_NAME.equals(classB)) {
@@ -84,6 +87,7 @@ final class OSGiFriendlyClassWriter extends ClassWriter {
         return (idx > 0) ? listA.get(idx - 1) : null;
     }
 
+    @Nullable
     private List<String> getSuperClasses(String className) {
         final LinkedList<String> superClasses = new LinkedList<>();
         BundleWiring bundleWiring = initialWiring;
@@ -113,6 +117,7 @@ final class OSGiFriendlyClassWriter extends ClassWriter {
         return superClasses;
     }
 
+    @Nullable
     private String extractSuperClass(BundleWiring bundleWiring, String className) {
         final ClassLoader cl = bundleWiring == null ? ClassLoader.getPlatformClassLoader() : bundleWiring.getClassLoader();
         final InputStream is = cl.getResourceAsStream(className + CLASS_EXTENSION);
@@ -130,7 +135,7 @@ final class OSGiFriendlyClassWriter extends ClassWriter {
         }
     }
 
-    private BundleWiring getBundleWiringFor(BundleWiring bundleWiring, String packageName) {
+    private BundleWiring getBundleWiringFor(@Nonnull BundleWiring bundleWiring, String packageName) {
         final List<BundleWire> requiredWires = bundleWiring.getRequiredWires(PACKAGE_WIRING);
         for (BundleWire requiredWire : requiredWires) {
             final BundleCapability capability = requiredWire.getCapability();
@@ -159,7 +164,8 @@ final class OSGiFriendlyClassWriter extends ClassWriter {
         }
     }
 
-    private static String getPackageName(String className) {
+    @Nonnull
+    private static String getPackageName(@Nonnull String className) {
         int idx = className.lastIndexOf('/');
         if (idx < 0) {
             throw new IllegalArgumentException("Invalid class: " + className);

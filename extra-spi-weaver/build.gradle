@@ -12,6 +12,7 @@ dependencies {
     compileOnly "org.osgi:osgi.core:$osgiCoreVersion"
     compileOnly "org.osgi:org.osgi.service.serviceloader:$osgiServiceLoaderVersion"
     compileOnly "biz.aQute.bnd:biz.aQute.bndlib:$bndVersion"
+    compileOnly "com.google.code.findbugs:jsr305:$jsr305Version"
     compileOnly "org.ow2.asm:asm-commons:$asmVersion"
     compileOnly "org.ow2.asm:asm:$asmVersion"
 }
@@ -22,6 +23,9 @@ def jar = tasks.named('jar', Jar) {
         bnd '''\
 Bundle-Name: \${project.description}
 Bundle-SymbolicName: \${project.group}.\${project.name}
+Import-Package: \
+    !javax.annotation, \
+    *
 -fixupmessages "Export [^,]++,\\\\s++has (\\\\d++),\\\\s++private references "; restrict:=warning; is:=error
 -conditionalpackage: \
     org.objectweb.asm.*, \

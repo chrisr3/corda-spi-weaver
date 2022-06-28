@@ -16,6 +16,8 @@ import org.osgi.framework.ServiceRegistration;
 import org.osgi.framework.hooks.weaving.WeavingHook;
 import org.osgi.util.tracker.BundleTracker;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -60,7 +62,7 @@ public final class DynamicExtraWeavingActivator implements BundleActivator {
     private Parameters autoConsumerInstructions;
 
     @Override
-    public void start(BundleContext context) throws Exception {
+    public void start(@Nonnull BundleContext context) throws Exception {
         String autoConsumers = context.getProperty("net.corda.spi-weaver.auto.consumers");
         autoConsumerInstructions = (autoConsumers != null) ? new Parameters(autoConsumers) : null;
 
@@ -114,7 +116,7 @@ public final class DynamicExtraWeavingActivator implements BundleActivator {
     }
 
     void registerConsumerBundle(Bundle consumerBundle,
-                                Set<ConsumerRestriction> restrictions,
+                                @Nonnull Set<ConsumerRestriction> restrictions,
                                 List<BundleDescriptor> allowedBundles) {
         Map<ConsumerRestriction, List<BundleDescriptor>> map = consumerRestrictions.computeIfAbsent(
             consumerBundle, k -> new HashMap<>()
@@ -128,6 +130,7 @@ public final class DynamicExtraWeavingActivator implements BundleActivator {
         bundleWeavingData.remove(bundle);
     }
 
+    @Nullable
     Set<WeavingData> getWeavingData(Bundle bundle) {
         // Simply return the value as it's already an immutable set.
         Set<WeavingData> weavingData = bundleWeavingData.get(bundle);

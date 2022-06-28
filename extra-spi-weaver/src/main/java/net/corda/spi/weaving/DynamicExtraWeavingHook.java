@@ -7,6 +7,7 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.hooks.weaving.WeavingHook;
 import org.osgi.framework.hooks.weaving.WovenClass;
 
+import javax.annotation.Nonnull;
 import java.util.Set;
 
 import static org.objectweb.asm.ClassReader.SKIP_FRAMES;
@@ -21,7 +22,7 @@ final class DynamicExtraWeavingHook implements WeavingHook {
     }
 
     @Override
-    public void weave(WovenClass wovenClass) {
+    public void weave(@Nonnull WovenClass wovenClass) {
         Bundle consumerBundle = wovenClass.getBundleWiring().getBundle();
         Set<WeavingData> weavingData = activator.getWeavingData(consumerBundle);
         if (weavingData!= null) {

@@ -1,0 +1,83 @@
+// This plugin is for providing the standard set of gradle used for all libraries
+// wishing to implement the OSGi-aware integration test framework
+
+import aQute.bnd.gradle.Bundle
+import aQute.bnd.gradle.Resolve
+import aQute.bnd.gradle.TestOSGi
+import static org.gradle.jvm.toolchain.JavaLanguageVersion.of
+
+import static com.gradle.enterprise.gradleplugin.test.JUnitXmlDialect.GENERIC
+import com.gradle.enterprise.gradleplugin.test.ImportJUnitXmlReports
+
+plugins {
+    id 'biz.aQute.bnd.builder'
+}
+
+dependencies {
+    testImplementation "org.osgi:org.osgi.test.junit5:$osgiTestJunit5Version"
+    testRuntimeOnly "org.junit.platform:junit-platform-launcher:$junitPlatformVersion"
+    testRuntimeOnly "org.apache.felix:org.apache.felix.framework:$felixVersion"
+    testRuntimeOnly "org.apache.felix:org.apache.felix.scr:$felixScrVersion"
+    testRuntimeOnly "org.osgi:org.osgi.service.component:$osgiServiceComponentVersion"
+    testRuntimeOnly "org.osgi:org.osgi.util.function:$osgiUtilFunctionVersion"
+    testRuntimeOnly "org.osgi:org.osgi.util.promise:$osgiUtilPromiseVersion"
+    testRuntimeOnly "org.slf4j:slf4j-simple:$slf4jVersion"
+}
+
+def testingBundle = tasks.register('testingBundle', Bundle) {
+    archiveClassifier = 'tests'
+    from sourceSets.test.output
+    sourceSet = sourceSets.test
+
+    bundle {
+        bnd """\
+Bundle-SymbolicName: \${task.archiveBaseName}-\${task.archiveClassifier}
+Test-Cases: \${classes;HIERARCHY_INDIRECTLY_ANNOTATED;org.junit.platform.commons.annotation.Testable;CONCRETE}
+"""
+    }
+}
+
+artifacts {
+    archives testingBundle
+}
+
+def resolve = tasks.register('resolve', Resolve) {
+    dependsOn tasks.named('jar', Jar), testingBundle
+    bundles = files(sourceSets.test.runtimeClasspath, configurations.archives.artifacts.files)
+    bndrun = file('test.bndrun')
+    outputBndrun = layout.buildDirectory.file('resolved-test.bndrun')
+    doFirst {
+        //  bnd attempts to use ~/ for caching if this is unavailable the build will fail.
+        System.setProperty('bnd.home.dir', "$rootDir/bnd/")
+    }
+}
+
+def testOSGi = tasks.register('testOSGi', TestOSGi) {
+    description = 'Runs OSGi tests.'
+    group = 'verification'
+    javaLauncher = javaToolchains.launcherFor {
+        languageVersion = of(11)
+    }
+    resultsDirectory = file("$testResultsDir/test")
+    bundles = files(sourceSets.test.runtimeClasspath, configurations.archives.artifacts.files)
+    bndrun = resolve.flatMap { it.outputBndrun }
+}
+
+tasks.named('check') {
+    dependsOn testOSGi
+}
+
+//Gradle enterprise does not pick up OSGI tests by default as they they are of type TestOSGi rather than standard
+// Test task this ensures test results are captured
+def importTask = tasks.register("importOSGiJUnitXml", ImportJUnitXmlReports) {
+    dialect = GENERIC
+    reports.from(fileTree("$testResultsDir/test").matching {
+        include '**/TEST-*.xml'
+    })
+}
+
+tasks.named('test', Test) {
+    finalizedBy importTask
+    dependsOn testOSGi
+    enabled = false
+}

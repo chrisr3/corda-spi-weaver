@@ -1,0 +1,28 @@
+-tester: biz.aQute.tester.junit-platform
+-runfw: org.apache.felix.framework
+-resolve.effective: resolve,active
+-runee: JavaSE-11
+-runtrace: true
+
+# Enable debugging.
+# -runjdb: 5055
+
+-runproperties: \
+    net.corda.spi-weaver.auto.consumers='extra-spi-weaver-tests',\
+    org.slf4j.simpleLogger.defaultLogLevel=info,\
+    org.slf4j.simpleLogger.showShortLogName=true,\
+    org.slf4j.simpleLogger.showThreadName=false,\
+    org.slf4j.simpleLogger.showDateTime=true,\
+    org.slf4j.simpleLogger.dateTimeFormat='yyyy-MM-dd HH:mm:ss:SSS Z'
+
+-runrequires: \
+    bnd.identity;id='net.corda.extra-spi-weaver',\
+    bnd.identity;id='extra-spi-weaver-tests',\
+    bnd.identity;id='com.fasterxml.woodstox.woodstox-core',\
+    bnd.identity;id='junit-jupiter-engine',\
+    bnd.identity;id='junit-platform-launcher',\
+    bnd.identity;id='slf4j.simple'
+
+-runstartlevel: \
+    order=sortbynameversion,\
+    begin=-1

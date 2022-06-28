@@ -2,7 +2,12 @@ pluginManagement {
     plugins {
         id 'biz.aQute.bnd.builder' version bndVersion
         id 'com.jfrog.artifactory' version artifactoryPluginVersion
+        id 'com.gradle.enterprise' version gradleEnterpriseVersion
     }
+}
+
+plugins {
+    id 'com.gradle.enterprise'
 }
 
 dependencyResolutionManagement {
@@ -12,5 +17,20 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = 'corda-spi-weaver'
-
 include 'extra-spi-weaver'
+
+gradleEnterprise {
+    server = gradleEnterpriseUrl
+    allowUntrustedServer = false
+    buildScan {
+        def apiKey = (settings.ext.find('CORDA_GRADLE_SCAN_KEY') ?: System.getenv('CORDA_GRADLE_SCAN_KEY'))?.trim()
+        if (apiKey) {
+            publishAlways()
+            capture {
+                taskInputFiles = true
+            }
+            uploadInBackground = false
+            accessKey = apiKey
+        }
+    }
+}

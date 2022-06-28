@@ -1,4 +1,5 @@
 plugins {
+    id 'corda.osgi-test-conventions'
     id 'biz.aQute.bnd.builder'
     id 'com.jfrog.artifactory'
     id 'maven-publish'
@@ -15,6 +16,13 @@ dependencies {
     compileOnly "com.google.code.findbugs:jsr305:$jsr305Version"
     compileOnly "org.ow2.asm:asm-commons:$asmVersion"
     compileOnly "org.ow2.asm:asm:$asmVersion"
+
+    testImplementation "org.slf4j:slf4j-api:$slf4jVersion"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
+    testImplementation "org.junit.jupiter:junit-jupiter-params:$junitVersion"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
+    testRuntimeOnly "org.apache.aries.spifly:org.apache.aries.spifly.dynamic.framework.extension:$ariesDynamicFrameworkExtensionVersion"
+    testRuntimeOnly "com.fasterxml.woodstox:woodstox-core:$woodstoxVersion"
 }
 
 def jar = tasks.named('jar', Jar) {

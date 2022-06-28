@@ -1,0 +1,18 @@
+plugins {
+    id 'groovy-gradle-plugin'
+}
+
+repositories {
+    gradlePluginPortal()
+}
+
+def constants = new Properties()
+file("$rootDir/../gradle.properties").withInputStream { InputStream input -> constants.load(input) }
+def bndVersion = constants.getProperty('bndVersion')
+def gradleEnterpriseVersion = constants.getProperty('gradleEnterpriseVersion')
+
+dependencies {
+    implementation "biz.aQute.bnd:biz.aQute.bnd.gradle:$bndVersion"
+    implementation "biz.aQute.bnd:biz.aQute.bndlib:$bndVersion"
+    implementation "com.gradle:gradle-enterprise-gradle-plugin:$gradleEnterpriseVersion"
+}

@@ -115,7 +115,7 @@ class TCCLSetterVisitor extends ClassVisitor {
                 invokeStatic(UTIL_CLASS, new Method(
                     "new" + serviceClassName.substring(serviceClassName.lastIndexOf('.') + 1) + serviceMethodName.substring(3),
                     Type.getObjectType(serviceClassName.replace('.', '/')),
-                    weavingData.getArgRestrictions().isEmpty()
+                    weavingData.getArgClasses() == null
                         ? new Type[] { CLASS_TYPE }
                         : new Type[] { STRING_TYPE, CLASSLOADER_TYPE, CLASS_TYPE }
                 ));

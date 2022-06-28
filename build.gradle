@@ -33,6 +33,14 @@ subprojects {
                 attributes('Corda-Vendor': 'Corda Open Source')
             }
         }
+
+        tasks.withType(Test).configureEach {
+            useJUnitPlatform()
+
+            doFirst {
+                systemProperty 'java.io.tmpdir', buildDir.absolutePath
+            }
+        }
     }
 
     pluginManager.withPlugin('maven-publish') {

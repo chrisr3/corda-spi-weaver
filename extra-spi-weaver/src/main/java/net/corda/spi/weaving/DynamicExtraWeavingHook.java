@@ -10,9 +10,9 @@ import org.osgi.framework.hooks.weaving.WovenClass;
 import javax.annotation.Nonnull;
 import java.util.Set;
 
+import static org.objectweb.asm.ClassReader.SKIP_DEBUG;
 import static org.objectweb.asm.ClassReader.SKIP_FRAMES;
 import static org.objectweb.asm.ClassWriter.COMPUTE_FRAMES;
-import static org.objectweb.asm.ClassWriter.COMPUTE_MAXS;
 
 final class DynamicExtraWeavingHook implements WeavingHook {
     private final DynamicExtraWeavingActivator activator;
@@ -27,9 +27,9 @@ final class DynamicExtraWeavingHook implements WeavingHook {
         Set<WeavingData> weavingData = activator.getWeavingData(consumerBundle);
         if (weavingData!= null) {
             ClassReader cr = new ClassReader(wovenClass.getBytes());
-            ClassWriter cw = new OSGiFriendlyClassWriter(COMPUTE_MAXS | COMPUTE_FRAMES, wovenClass.getBundleWiring());
+            ClassWriter cw = new OSGiFriendlyClassWriter(COMPUTE_FRAMES, wovenClass.getBundleWiring());
             TCCLSetterVisitor tsv = new TCCLSetterVisitor(cw, wovenClass.getClassName(), weavingData);
-            cr.accept(tsv, SKIP_FRAMES);
+            cr.accept(tsv, SKIP_FRAMES | SKIP_DEBUG);
             if (tsv.isWoven()) {
                 wovenClass.setBytes(cw.toByteArray());
                 wovenClass.getDynamicImports().addAll(tsv.getExtraImports());

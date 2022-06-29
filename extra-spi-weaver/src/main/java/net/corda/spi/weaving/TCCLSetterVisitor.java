@@ -50,12 +50,12 @@ class TCCLSetterVisitor extends ClassVisitor {
     static final String NEW_FACTORY = "newFactory";
     static final String NEW_INSTANCE = "newInstance";
 
-    static final Set<String> FACTORY_TYPES = Set.of(
+    private static final Set<String> FACTORY_TYPES = Set.of(
         XMLInputFactory.class.getName(),
         XMLOutputFactory.class.getName(),
         XMLEventFactory.class.getName()
     );
-    static final Set<String> FACTORY_NAMES = Set.of(
+    private static final Set<String> FACTORY_NAMES = Set.of(
         NEW_INSTANCE,
         NEW_FACTORY
     );
@@ -115,7 +115,7 @@ class TCCLSetterVisitor extends ClassVisitor {
                 visitLdcInsn(targetClass);
                 invokeStatic(UTIL_CLASS, new Method(
                     "new" + serviceClassName.substring(serviceClassName.lastIndexOf('.') + 1) + serviceMethodName.substring(3),
-                    Type.getObjectType(serviceClassName.replace('.', '/')),
+                    Type.getReturnType(desc),
                     serviceArgClasses.length == 0
                         ? new Type[] { CLASS_TYPE }
                         : new Type[] { STRING_TYPE, CLASSLOADER_TYPE, CLASS_TYPE }

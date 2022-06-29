@@ -21,7 +21,7 @@ class XMLFactoryTest {
         Object factory = XMLInputFactory.newFactory();
         assertInstanceOf(XMLInputFactory.class, factory);
         assertFromBundle(WOODSTOX_BSN, factory);
-        LOG.info("WOVEN XMLInputFactory: {}", factory);
+        LOG.info("WOVEN XMLInputFactory#newFactory(): {}", factory);
     }
 
     @Test
@@ -29,7 +29,7 @@ class XMLFactoryTest {
         Object factory = XMLInputFactory.newFactory(XMLInputFactory.class.getName(), getClass().getClassLoader());
         assertInstanceOf(XMLInputFactory.class, factory);
         assertFromBundle(WOODSTOX_BSN, factory);
-        LOG.info("WOVEN XMLInputFactory(ClassLoader): {}", factory);
+        LOG.info("WOVEN XMLInputFactory#newFactory(ClassLoader): {}", factory);
     }
 
     @Test
@@ -37,7 +37,7 @@ class XMLFactoryTest {
         Object factory = XMLOutputFactory.newFactory();
         assertInstanceOf(XMLOutputFactory.class, factory);
         assertFromBundle(WOODSTOX_BSN, factory);
-        LOG.info("WOVEN XMLOutputFactory: {}", factory);
+        LOG.info("WOVEN XMLOutputFactory#newFactory(): {}", factory);
     }
 
     @Test
@@ -45,7 +45,7 @@ class XMLFactoryTest {
         Object factory = XMLOutputFactory.newFactory(XMLOutputFactory.class.getName(), getClass().getClassLoader());
         assertInstanceOf(XMLOutputFactory.class, factory);
         assertFromBundle(WOODSTOX_BSN, factory);
-        LOG.info("WOVEN XMLOutputFactory(ClassLoader): {}", factory);
+        LOG.info("WOVEN XMLOutputFactory#newFactory(ClassLoader): {}", factory);
     }
 
     @Test
@@ -53,7 +53,7 @@ class XMLFactoryTest {
         Object factory = XMLEventFactory.newFactory();
         assertInstanceOf(XMLEventFactory.class, factory);
         assertFromBundle(WOODSTOX_BSN, factory);
-        LOG.info("WOVEN XMLEventFactory: {}", factory);
+        LOG.info("WOVEN XMLEventFactory#newFactory(): {}", factory);
     }
 
     @Test
@@ -61,7 +61,7 @@ class XMLFactoryTest {
         Object factory = XMLEventFactory.newFactory(XMLEventFactory.class.getName(), getClass().getClassLoader());
         assertInstanceOf(XMLEventFactory.class, factory);
         assertFromBundle(WOODSTOX_BSN, factory);
-        LOG.info("WOVEN XMLEventFactory(ClassLoader): {}", factory);
+        LOG.info("WOVEN XMLEventFactory#newFactory(ClassLoader): {}", factory);
     }
 
     @SuppressWarnings("SameParameterValue")

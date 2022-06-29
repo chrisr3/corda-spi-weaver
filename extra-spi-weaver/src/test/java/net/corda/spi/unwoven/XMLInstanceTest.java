@@ -15,49 +15,50 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class XMLFactoryTest {
-    private static final Logger LOG = LoggerFactory.getLogger(XMLFactoryTest.class);
+@SuppressWarnings("deprecation")
+class XMLInstanceTest {
+    private static final Logger LOG = LoggerFactory.getLogger(XMLInstanceTest.class);
 
     @Test
     void testXMLInputFactory() {
-        Object factory = XMLInputFactory.newFactory();
-        assertInstanceOf(XMLInputFactory.class, factory);
-        assertFromBundle(null, factory);
-        LOG.info("UNWOVEN XMLInputFactory#newFactory(): {}", factory);
+        Object instance = XMLInputFactory.newInstance();
+        assertInstanceOf(XMLInputFactory.class, instance);
+        assertFromBundle(null, instance);
+        LOG.info("UNWOVEN XMLInputFactory#newInstance(): {}", instance);
     }
 
     @Test
     void testXMLInputFactoryWithClassLoader() {
         assertThrows(FactoryConfigurationError.class, () ->
-            XMLInputFactory.newFactory(XMLInputFactory.class.getName(), getClass().getClassLoader()));
+            XMLInputFactory.newInstance(XMLInputFactory.class.getName(), getClass().getClassLoader()));
     }
 
     @Test
     void testXMLOutputFactory() {
-        Object factory = XMLOutputFactory.newFactory();
-        assertInstanceOf(XMLOutputFactory.class, factory);
-        assertFromBundle(null, factory);
-        LOG.info("UNWOVEN XMLOutputFactory#factory#newFactory(): {}", factory);
+        Object instance = XMLOutputFactory.newInstance();
+        assertInstanceOf(XMLOutputFactory.class, instance);
+        assertFromBundle(null, instance);
+        LOG.info("UNWOVEN XMLOutputFactory#newInstance(): {}", instance);
     }
 
     @Test
     void testXMLOutputFactoryWithClassLoader() {
         assertThrows(FactoryConfigurationError.class, () ->
-            XMLOutputFactory.newFactory(XMLOutputFactory.class.getName(), getClass().getClassLoader()));
+            XMLOutputFactory.newInstance(XMLOutputFactory.class.getName(), getClass().getClassLoader()));
     }
 
     @Test
     void testXMLEventFactory() {
-        Object factory = XMLEventFactory.newFactory();
-        assertInstanceOf(XMLEventFactory.class, factory);
-        assertFromBundle(null, factory);
-        LOG.info("UNWOVEN XMLEventFactory#newFactory(): {}", factory);
+        Object instance = XMLEventFactory.newInstance();
+        assertInstanceOf(XMLEventFactory.class, instance);
+        assertFromBundle(null, instance);
+        LOG.info("UNWOVEN XMLEventFactory#newInstance(): {}", instance);
     }
 
     @Test
     void testXMLEventFactoryWithClassLoader() {
         assertThrows(FactoryConfigurationError.class, () ->
-            XMLEventFactory.newFactory(XMLEventFactory.class.getName(), getClass().getClassLoader()));
+            XMLEventFactory.newInstance(XMLEventFactory.class.getName(), getClass().getClassLoader()));
     }
 
     @SuppressWarnings("SameParameterValue")

@@ -20,7 +20,7 @@ rootProject.name = 'corda-spi-weaver'
 include 'extra-spi-weaver'
 
 gradleEnterprise {
-    server = gradleEnterpriseUrl
+    server = settings.ext.find('gradleEnterpriseUrl')
     allowUntrustedServer = false
     buildScan {
         def apiKey = (settings.ext.find('CORDA_GRADLE_SCAN_KEY') ?: System.getenv('CORDA_GRADLE_SCAN_KEY'))?.trim()

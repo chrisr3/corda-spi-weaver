@@ -94,7 +94,7 @@ artifactory {
     }
 }
 
-wrapper {
+tasks.named('wrapper') {
     gradleVersion = '7.4.2'
     distributionType = Wrapper.DistributionType.BIN
 }

@@ -24,11 +24,8 @@ dependencies {
     testRuntimeOnly "org.slf4j:slf4j-simple:$slf4jVersion"
 }
 
-def testingBundle = tasks.register('testingBundle', Bundle) {
-    archiveClassifier = 'tests'
-    from sourceSets.test.output
-    sourceSet = sourceSets.test
-
+def testingBundles = tasks.withType(TestingBundle)
+testingBundles.configureEach {
     bundle {
         bnd """\
 Bundle-SymbolicName: \${task.archiveBaseName}-\${task.archiveClassifier}
@@ -37,12 +34,8 @@ Test-Cases: \${classes;HIERARCHY_INDIRECTLY_ANNOTATED;org.junit.platform.commons
     }
 }
 
-artifacts {
-    archives testingBundle
-}
-
 def resolve = tasks.register('resolve', Resolve) {
-    dependsOn tasks.named('jar', Jar), testingBundle
+    dependsOn tasks.named('jar', Jar), testingBundles
     bundles = files(sourceSets.test.runtimeClasspath, configurations.archives.artifacts.files)
     bndrun = file('test.bndrun')
     outputBndrun = layout.buildDirectory.file('resolved-test.bndrun')
@@ -80,4 +73,7 @@ tasks.named('test', Test) {
     finalizedBy importTask
     dependsOn testOSGi
     enabled = false
+}
+
+class TestingBundle extends Bundle {
 }

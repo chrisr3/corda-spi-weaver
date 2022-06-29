@@ -17,6 +17,7 @@ dependencies {
     compileOnly "org.ow2.asm:asm-commons:$asmVersion"
     compileOnly "org.ow2.asm:asm:$asmVersion"
 
+    testCompileOnly "org.osgi:osgi.core:$osgiCoreVersion"
     testImplementation "org.slf4j:slf4j-api:$slf4jVersion"
     testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
     testImplementation "org.junit.jupiter:junit-jupiter-params:$junitVersion"
@@ -40,6 +41,24 @@ Import-Package: \
     aQute.*
 '''
     }
+}
+
+def wovenBundle = tasks.register('wovenBundle', TestingBundle) {
+    archiveClassifier = 'woven'
+    from sourceSets.test.output
+    sourceSet = sourceSets.test
+    include 'net/corda/spi/woven/**'
+}
+
+def unwovenBundle = tasks.register('unwovenBundle', TestingBundle) {
+    archiveClassifier = 'unwoven'
+    from sourceSets.test.output
+    sourceSet = sourceSets.test
+    include 'net/corda/spi/unwoven/**'
+}
+
+artifacts {
+    archives wovenBundle, unwovenBundle
 }
 
 publishing {

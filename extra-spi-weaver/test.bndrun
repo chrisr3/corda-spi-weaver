@@ -8,7 +8,7 @@
 # -runjdb: 5055
 
 -runproperties: \
-    net.corda.spi-weaver.auto.consumers='extra-spi-weaver-tests',\
+    net.corda.spi-weaver.auto.consumers='extra-spi-weaver-woven',\
     org.slf4j.simpleLogger.defaultLogLevel=info,\
     org.slf4j.simpleLogger.showShortLogName=true,\
     org.slf4j.simpleLogger.showThreadName=false,\
@@ -17,7 +17,8 @@
 
 -runrequires: \
     bnd.identity;id='net.corda.extra-spi-weaver',\
-    bnd.identity;id='extra-spi-weaver-tests',\
+    bnd.identity;id='extra-spi-weaver-woven',\
+    bnd.identity;id='extra-spi-weaver-unwoven',\
     bnd.identity;id='com.fasterxml.woodstox.woodstox-core',\
     bnd.identity;id='junit-jupiter-engine',\
     bnd.identity;id='junit-platform-launcher',\

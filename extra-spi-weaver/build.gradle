@@ -33,7 +33,7 @@ def jar = tasks.named('jar', Jar) {
 Bundle-Name: \${project.description}
 Bundle-SymbolicName: \${project.group}.\${project.name}
 Import-Package: \
-    !javax.annotation, \
+    javax.annotation;resolution:=optional, \
     *
 -fixupmessages "Export [^,]++,\\\\s++has (\\\\d++),\\\\s++private references "; restrict:=warning; is:=error
 -conditionalpackage: \

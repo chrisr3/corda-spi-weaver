@@ -12,7 +12,7 @@ ext {
 
 subprojects {
     group = 'net.corda'
-    version = '1.0.0-SNAPSHOT'
+    version = spiWeaverVersion
 
     pluginManager.withPlugin('java') {
         java {

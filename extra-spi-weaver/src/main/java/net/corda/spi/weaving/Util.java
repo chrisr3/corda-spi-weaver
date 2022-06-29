@@ -56,6 +56,10 @@ import static org.osgi.framework.ServicePermission.GET;
  */
 @SuppressWarnings("unused")
 public final class Util {
+    // We enforce the following requirements:
+    // - That we only select services registered by the OSGi ServiceLoader Mediator.
+    // - That the Mediator has been installed as an OSGi Framework Extension.
+    private static final String PROVIDED_BY_SERVICELOADER_MEDIATOR = "(serviceloader.mediator=0)";
     private static final Logger logger = DynamicExtraWeavingActivator.logger;
 
     public static XMLInputFactory newXMLInputFactoryFactory(String factoryId, ClassLoader specifiedClassLoader, Class<?> caller) {
@@ -193,7 +197,7 @@ public final class Util {
             }
         }
 
-        ServiceReference<?>[] references = context.getServiceReferences(serviceType, null);
+        ServiceReference<?>[] references = context.getServiceReferences(serviceType, PROVIDED_BY_SERVICELOADER_MEDIATOR);
         if (references != null) {
             for (ServiceReference<?> reference : references) {
                 bundles.add(reference.getBundle());

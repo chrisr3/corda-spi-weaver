@@ -30,6 +30,7 @@ import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
+import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -63,33 +64,33 @@ final class OSGiFriendlyClassWriter extends ClassWriter {
      * precondition: classA and classB are not equal. (checked before this method is called)
      */
     @Override
-    @Nullable
+    @Nonnull
     protected String getCommonSuperClass(String classA, String classB) {
         //If either is Object, then Object must be the answer
         if (OBJECT_INTERNAL_NAME.equals(classA) || OBJECT_INTERNAL_NAME.equals(classB)) {
             return OBJECT_INTERNAL_NAME;
         }
 
-        final List<String> listA = getSuperClasses(classA);
-        final List<String> listB = getSuperClasses(classB);
-        if (listA == null || listB == null) {
-            return null;
-        }
-        final int num = Math.min(listA.size(), listB.size());
-        int idx = 0;
-        for (; idx < num; ++idx) {
-            final String superClassA = listA.get(idx);
-            final String superClassB = listB.get(idx);
+        final Deque<String> listA = getSuperClasses(classA);
+        final Deque<String> listB = getSuperClasses(classB);
+
+        String commonSuperClass = OBJECT_INTERNAL_NAME;
+        int count = Math.min(listA.size(), listB.size());
+        while (count > 0) {
+            final String superClassA = listA.removeFirst();
+            final String superClassB = listB.removeFirst();
             if (!superClassA.equals(superClassB)) {
                 break;
             }
+            commonSuperClass = superClassA;
+            --count;
         }
-        return (idx > 0) ? listA.get(idx - 1) : null;
+        return commonSuperClass;
     }
 
-    @Nullable
-    private List<String> getSuperClasses(String className) {
-        final LinkedList<String> superClasses = new LinkedList<>();
+    @Nonnull
+    private Deque<String> getSuperClasses(String className) {
+        final Deque<String> superClasses = new LinkedList<>();
         BundleWiring bundleWiring = initialWiring;
         String packageName = "";
         for (;;) {
@@ -110,7 +111,7 @@ final class OSGiFriendlyClassWriter extends ClassWriter {
             final String superClassName = extractSuperClass(bundleWiring, className);
             if (superClassName == null) {
                 // Only java.lang.Object should have a null super class.
-                return null;
+                throw new TypeNotPresentException(className, null);
             }
             className = superClassName;
         }

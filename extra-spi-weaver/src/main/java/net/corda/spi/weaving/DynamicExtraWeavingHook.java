@@ -29,10 +29,15 @@ final class DynamicExtraWeavingHook implements WeavingHook {
             ClassReader cr = new ClassReader(wovenClass.getBytes());
             ClassWriter cw = new OSGiFriendlyClassWriter(COMPUTE_FRAMES, wovenClass.getBundleWiring());
             TCCLSetterVisitor tsv = new TCCLSetterVisitor(cw, wovenClass.getClassName(), weavingData);
-            cr.accept(tsv, SKIP_FRAMES | SKIP_DEBUG);
-            if (tsv.isWoven()) {
-                wovenClass.setBytes(cw.toByteArray());
-                wovenClass.getDynamicImports().addAll(tsv.getExtraImports());
+            try {
+                cr.accept(tsv, SKIP_FRAMES | SKIP_DEBUG);
+                if (tsv.isWoven()) {
+                    wovenClass.setBytes(cw.toByteArray());
+                    wovenClass.getDynamicImports().addAll(tsv.getExtraImports());
+                }
+            } catch(RuntimeException e) {
+                System.err.println("[corda-extra-spi-weaver] ERROR " + e.getClass().getName()
+                    + " while weaving " + wovenClass.getClassName() + ": " + e.getMessage());
             }
         }
     }

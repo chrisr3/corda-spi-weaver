@@ -19,7 +19,6 @@
 package net.corda.spi.weaving;
 
 import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.osgi.framework.wiring.BundleCapability;
 import org.osgi.framework.wiring.BundleWire;
@@ -34,10 +33,6 @@ import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
-import static org.objectweb.asm.ClassReader.SKIP_CODE;
-import static org.objectweb.asm.ClassReader.SKIP_DEBUG;
-import static org.objectweb.asm.ClassReader.SKIP_FRAMES;
 
 /**
  * We need to override ASM's default behaviour in {@link #getCommonSuperClass(String, String)}
@@ -127,10 +122,7 @@ final class OSGiFriendlyClassWriter extends ClassWriter {
         }
 
         try (is) {
-            ClassReader reader = new ClassReader(is);
-            ExtractSuperClass esc = new ExtractSuperClass(api);
-            reader.accept(esc, SKIP_CODE | SKIP_DEBUG | SKIP_FRAMES);
-            return esc.superClass;
+            return new ClassReader(is).getSuperName();
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
@@ -150,19 +142,6 @@ final class OSGiFriendlyClassWriter extends ClassWriter {
         }
         // We haven't gone anywhere, so keep this wiring.
         return bundleWiring;
-    }
-
-    private static class ExtractSuperClass extends ClassVisitor {
-        String superClass;
-
-        ExtractSuperClass(int api) {
-            super(api);
-        }
-
-        @Override
-        public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
-            this.superClass = superName;
-        }
     }
 
     @Nonnull

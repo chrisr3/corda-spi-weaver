@@ -34,13 +34,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import static org.osgi.framework.wiring.BundleRevision.PACKAGE_NAMESPACE;
+
 /**
  * We need to override ASM's default behaviour in {@link #getCommonSuperClass(String, String)}
  * so that it doesn't load classes (which it was doing on the wrong {@link ClassLoader} anyway...)
  */
 final class OSGiFriendlyClassWriter extends ClassWriter {
     private static final String OBJECT_INTERNAL_NAME = "java/lang/Object";
-    private static final String PACKAGE_WIRING = "osgi.wiring.package";
     private static final String CLASS_EXTENSION = ".class";
 
     private final BundleWiring initialWiring;
@@ -129,12 +130,12 @@ final class OSGiFriendlyClassWriter extends ClassWriter {
     }
 
     private BundleWiring getBundleWiringFor(@Nonnull BundleWiring bundleWiring, String packageName) {
-        final List<BundleWire> requiredWires = bundleWiring.getRequiredWires(PACKAGE_WIRING);
+        final List<BundleWire> requiredWires = bundleWiring.getRequiredWires(PACKAGE_NAMESPACE);
         for (BundleWire requiredWire : requiredWires) {
             final BundleCapability capability = requiredWire.getCapability();
             if (capability != null) {
                 final Map<String, ?> attributes = capability.getAttributes();
-                final Object wirePackage = attributes.get(PACKAGE_WIRING);
+                final Object wirePackage = attributes.get(PACKAGE_NAMESPACE);
                 if (packageName.equals(wirePackage)) {
                     return requiredWire.getProviderWiring();
                 }

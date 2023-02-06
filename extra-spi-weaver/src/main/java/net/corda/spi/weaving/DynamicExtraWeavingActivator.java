@@ -126,8 +126,9 @@ public final class DynamicExtraWeavingActivator implements BundleActivator {
         }
     }
 
-    void removeWeavingData(Bundle bundle) {
+    void removeBundle(Bundle bundle) {
         bundleWeavingData.remove(bundle);
+        consumerRestrictions.remove(bundle);
     }
 
     @Nullable

@@ -105,12 +105,12 @@ public final class DynamicExtraWeavingActivator implements BundleActivator {
         }
 
         if (weavingData.isEmpty()) {
-            bundleWeavingData.put(bundle, NON_WOVEN_BUNDLE);
+            bundleWeavingData.putIfAbsent(bundle, NON_WOVEN_BUNDLE);
         } else {
-            bundleWeavingData.put(bundle, unmodifiableSet(weavingData));
-
-            for (WeavingData data : weavingData) {
-                registerConsumerBundle(bundle, data.getArgRestrictions(), data.getAllowedBundles());
+            if (bundleWeavingData.putIfAbsent(bundle, unmodifiableSet(weavingData)) == null) {
+                for (WeavingData data : weavingData) {
+                    registerConsumerBundle(bundle, data.getArgRestrictions(), data.getAllowedBundles());
+                }
             }
         }
     }

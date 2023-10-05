@@ -15,7 +15,8 @@ plugins {
 
 dependencies {
     testImplementation "org.osgi:org.osgi.test.junit5:$osgiTestJunit5Version"
-    testRuntimeOnly "org.junit.platform:junit-platform-launcher:$junitPlatformVersion"
+    testImplementation "org.junit.jupiter:junit-jupiter:$junitVersion"
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     testRuntimeOnly "org.apache.felix:org.apache.felix.framework:$felixVersion"
     testRuntimeOnly "org.apache.felix:org.apache.felix.scr:$felixScrVersion"
     testRuntimeOnly "org.osgi:org.osgi.service.component:$osgiServiceComponentVersion"

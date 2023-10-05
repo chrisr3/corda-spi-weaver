@@ -19,9 +19,9 @@ dependencies {
 
     testCompileOnly "org.osgi:osgi.core:$osgiCoreVersion"
     testImplementation "org.slf4j:slf4j-api:$slf4jVersion"
-    testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
-    testImplementation "org.junit.jupiter:junit-jupiter-params:$junitVersion"
+    testImplementation "org.junit.jupiter:junit-jupiter:$junitVersion"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     testRuntimeOnly "org.apache.aries.spifly:org.apache.aries.spifly.dynamic.framework.extension:$ariesDynamicFrameworkExtensionVersion"
     testRuntimeOnly "com.fasterxml.woodstox:woodstox-core:$woodstoxVersion"
 }
@@ -46,15 +46,21 @@ Import-Package: \
 def wovenBundle = tasks.register('wovenBundle', TestingBundle) {
     archiveClassifier = 'woven'
     from sourceSets.test.output
-    sourceSet = sourceSets.test
     include 'net/corda/spi/woven/**'
+    bundle {
+        sourceSet = sourceSets.test
+        classpath = sourceSets.test.compileClasspath
+    }
 }
 
 def unwovenBundle = tasks.register('unwovenBundle', TestingBundle) {
     archiveClassifier = 'unwoven'
     from sourceSets.test.output
-    sourceSet = sourceSets.test
     include 'net/corda/spi/unwoven/**'
+    bundle {
+        sourceSet = sourceSets.test
+        classpath = sourceSets.test.compileClasspath
+    }
 }
 
 artifacts {
